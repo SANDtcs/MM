@@ -120,6 +120,50 @@ print("Historical Simulation VaR:", var1)
 print("Parametric VaR:", var2)
 
 
+
+# Assuming you have the returns of the first two stocks in nifty50_data[0] and nifty50_data[1]
+stock1_returns = nifty50_data[0]["Returns"]
+stock2_returns = nifty50_data[1]["Returns"]
+
+# Calculate the mean returns and covariance
+mean_returns = np.array([np.mean(stock1_returns), np.mean(stock2_returns)])
+cov_matrix = np.cov(stock1_returns, stock2_returns)
+
+# Define the range of portfolio weights
+weights = np.linspace(0, 1, 100)
+
+# Calculate the portfolio returns and variances for different weight combinations
+portfolio_returns = []
+portfolio_variances = []
+for w1 in weights:
+  w2 = 1 - w1
+  portfolio_return = w1 * mean_returns[0] + w2 * mean_returns[1]
+  portfolio_variance = (w1**2 * cov_matrix[0, 0] +
+                        w2**2 * cov_matrix[1, 1] +
+                        2 * w1 * w2 * cov_matrix[0, 1])
+  portfolio_returns.append(portfolio_return)
+  portfolio_variances.append(portfolio_variance)
+
+# Find the minimum variance portfolio
+min_variance_index = np.argmin(portfolio_variances)
+min_variance_return = portfolio_returns[min_variance_index]
+min_variance_variance = portfolio_variances[min_variance_index]
+
+# Plot the efficient frontier
+plt.figure(figsize=(10, 6))
+plt.scatter(portfolio_variances, portfolio_returns, c='blue', marker='o', label='Portfolios')
+plt.scatter(min_variance_variance, min_variance_return, c='red', marker='x', s=100, label='Minimum Variance Portfolio')
+plt.xlabel('Portfolio Variance')
+plt.ylabel('Portfolio Return')
+plt.title('Efficient Frontier')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
+
+
+
 # ****************************************************************************** Question 3 *************************************************************************************
 import matplotlib.pyplot as plt
 import numpy as np
